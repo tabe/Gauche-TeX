@@ -1,0 +1,19 @@
+Basic
+=====
+
+It is necessary to:
+- use gauche 0.8.7 or later
+
+
+Command lines
+=============
+
+$ ./configure
+$ make
+# make install
+
+
+Distribution Specific
+=====================
+
+Nothing so far.

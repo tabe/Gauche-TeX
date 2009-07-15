@@ -1,0 +1,7 @@
+\documentclass{article}
+\begin{document}
+\def\a{\b}
+\def\b{A\def\a{B\def\a{C\def\a{\b}}}}
+\def\puzzle{\a\a\a\a\a}
+\puzzle
+\end{document}

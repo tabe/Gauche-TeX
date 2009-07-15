@@ -1,0 +1,4 @@
+DIST_EXCLUDE
+Gauche-TeX.gpd
+autom4te.cache
+gauche-tex

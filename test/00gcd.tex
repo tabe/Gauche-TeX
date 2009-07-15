@@ -1,0 +1,16 @@
+\documentclass{article}
+\usepackage{ifthen}
+\pagestyle{empty}
+\newcounter{ca}\newcounter{cb}
+\newcommand{\printgcd}[2]{%
+ \setcounter{ca}{#1}\setcounter{cb}{#2}%
+ Gcd(#1,#2) =%
+ \whiledo{\not\(\value{ca}=\value{cb}\)}%
+		 {\ifthenelse{\value{ca}>\value{cb}}%
+		   {\addtocounter{ca}{-\value{cb}}}%
+		   {\addtocounter{cb}{-\value{ca}}}%
+		   gcd(\arabic{ca},\arabic{cb}) = }%
+		 \arabic{ca}.}
+\begin{document}
+\printgcd{54}{30}
+\end{document}

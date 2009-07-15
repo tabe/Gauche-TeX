@@ -1,0 +1,74 @@
+#!/bin/sh
+#
+# A helper script for developers.
+#  ./DIST gen  : runs autoconf to generate 'configure' script.
+#  ./DIST tgz  : creates a tarball.
+#  ./DIST sim  : simulates to build.
+#  ./DIST pub  : releases to public.
+# Assumes gnu tar.
+
+MODULE=Gauche-TeX
+MAKE=gmake
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    gen) gen=yes; shift ;;
+    tgz) tgz=yes; shift ;;
+    sim) sim=yes; shift ;;
+    pub) pub=yes; shift ;;
+    *) echo "DIST gen|tgz|sim|pub"; exit 0;;
+  esac
+done
+
+if [ "$gen" = "yes" ]; then
+  autoconf
+fi
+
+if [ "$tgz" = "yes" ]; then
+  if [ -f Makefile ]; then $MAKE maintainer-clean; fi
+  ./DIST gen
+  ./configure
+  $MAKE distclean
+
+  if [ ! -f VERSION ]; then echo "No VERSION; something wrong?"; exit 1; fi
+  VERSION=`cat VERSION`
+
+  rm -f DIST_EXCLUDE_X
+  echo DIST > DIST_EXCLUDE_X
+  echo DIST_EXCLUDE_X >> DIST_EXCLUDE_X
+  if [ -f DIST_EXCLUDE ]; then cat DIST_EXCLUDE >> DIST_EXCLUDE_X; fi
+  find . -name CVS -print -prune >> DIST_EXCLUDE_X
+  find . -name .svn -print -prune >> DIST_EXCLUDE_X
+
+  rm -rf ../$MODULE-$VERSION
+
+  mkdir ../$MODULE-$VERSION
+  tar cvfX - DIST_EXCLUDE_X . | (cd ../$MODULE-$VERSION; tar xf -)
+  (cd ..; tar cvf - $MODULE-$VERSION | gzip -9 > $MODULE-$VERSION.tgz)
+  (cd ..; rm -rf $MODULE-$VERSION)
+fi
+
+if [ "$sim" = "yes" ]; then
+  ./DIST tgz
+  if [ "$?" != "0" ]; then exit 1; fi
+  VERSION=`cat VERSION`
+  (cd ..; zcat $MODULE-$VERSION.tgz | tar xf -)
+  (cd ../$MODULE-$VERSION; ./configure)
+  $MAKE -C ../$MODULE-$VERSION all check doc #example
+fi
+
+if [ "$pub" = "yes" ]; then
+  ./DIST sim
+  if [ "$?" != "0" ]; then exit 1; fi
+  VERSION=`cat VERSION`
+  $MAKE -C gauche-tex clean all
+  if [ "$?" != "0" ]; then exit 2; fi
+  for x in \
+	  ../$MODULE-$VERSION.tgz \
+	  ../$MODULE-$VERSION/doc/reference.ja.html \
+	  ../$MODULE-$VERSION/doc/reference.en.html \
+	  gauche-tex/index.html \
+	  gauche-tex/index.en.html; do
+	cp -pf $x /home/htdocs/gauche-tex/
+  done
+fi

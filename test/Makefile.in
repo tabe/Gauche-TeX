@@ -1,0 +1,9 @@
+DVIFILES = 00band.dvi 00gcd.dvi 00puzzle.dvi 00quot.dvi \
+		20070315.dvi 20070404.dvi
+
+.SUFFIX: .tex .dvi
+
+%.dvi: %.tex
+	platex $<
+
+all: $(DVIFILES)
