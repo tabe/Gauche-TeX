@@ -7,3 +7,6 @@ DVIFILES = 00band.dvi 00gcd.dvi 00puzzle.dvi 00quot.dvi \
 	platex $<
 
 all: $(DVIFILES)
+
+clean:
+	-rm $(DVIFILES) *.aux *.log

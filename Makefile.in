@@ -35,7 +35,8 @@ HEADERS   =
 TARGET    = $(ARCHFILES)
 GENERATED = 
 CONFIG_GENERATED = Makefile config.cache config.log config.status \
-		   configure.lineno autom4te*.cache $(PACKAGE).gpd
+		   configure.lineno autom4te*.cache $(PACKAGE).gpd \
+		   doc/Makefile test/Makefile
 TEST_GENERATED = test.log
 
 GAUCHE_PKGINCDIR  = $(DESTDIR)@GAUCHE_PKGINCDIR@
@@ -68,15 +69,14 @@ uninstall :
 
 clean :
 	$(MAKE) -C doc clean
+	$(MAKE) -C test clean
 	$(GAUCHE_PACKAGE) compile --clean tex $(tex_SRCS)
 	rm -rf core *~ $(TARGET) $(GENERATED) $(TEST_GENERATED) so_locations
 
 distclean : clean
-	$(MAKE) -C doc distclean
 	rm -rf $(CONFIG_GENERATED)
 
 maintainer-clean : clean
-	$(MAKE) -C doc maintainer-clean
 	rm -rf $(CONFIG_GENERATED) configure VERSION
 
 doc : all
